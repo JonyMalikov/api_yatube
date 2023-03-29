@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
-from posts.models import Post, Group
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 
-from .serializers import PostSerializer, GroupSerializer, CommentSerializer
+from posts.models import Group, Post
+from .serializers import GroupSerializer, CommentSerializer, PostSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -21,7 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
             raise PermissionDenied('Изменение чужого контента запрещено!')
-        instance.delete()
+        super().perform_destroy(instance)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -49,4 +49,4 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
             raise PermissionDenied('Изменение чужого контента запрещено!')
-        instance.delete()
+        super().perform_destroy(instance)
